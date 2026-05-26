@@ -23,7 +23,6 @@
             position: relative;
         }
 
-        /* Animación de fondo starfield */
         @keyframes twinkle {
             0%, 100% { opacity: 0.3; }
             50% { opacity: 1; }
@@ -61,14 +60,8 @@
         }
 
         @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .logo {
@@ -76,10 +69,7 @@
             font-weight: 700;
             font-family: 'Playfair Display', serif;
             color: #fff;
-            text-shadow: 
-                0 0 10px #b388ff,
-                0 0 20px #8c9eff,
-                0 0 40px #6366f1;
+            text-shadow: 0 0 10px #b388ff, 0 0 20px #8c9eff, 0 0 40px #6366f1;
             letter-spacing: 3px;
             margin-bottom: 10px;
         }
@@ -102,9 +92,11 @@
             to { opacity: 1; }
         }
 
-        #g_id_onload {
-            display: inline-block;
+        #buttonDiv {
+            display: flex;
+            justify-content: center;
             margin-bottom: 15px;
+            min-height: 40px; /* Asegura espacio para el botón de Google */
         }
 
         .auth-button {
@@ -117,7 +109,6 @@
             font-family: 'Courier Prime', monospace;
             font-weight: 700;
             transition: all 0.3s ease;
-            margin-top: 20px;
             font-size: 1rem;
             display: inline-block;
         }
@@ -128,14 +119,8 @@
             transform: translateY(-2px);
         }
 
-        .dashboard {
-            display: none;
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        .dashboard.active {
-            display: block;
-        }
+        .dashboard { display: none; animation: fadeIn 0.8s ease-out; }
+        .dashboard.active { display: block; }
 
         .dashboard-header {
             display: flex;
@@ -164,16 +149,8 @@
             border: 2px solid #b388ff;
         }
 
-        .user-details h3 {
-            color: #fff;
-            font-size: 0.95rem;
-            margin-bottom: 3px;
-        }
-
-        .user-details p {
-            color: #8c9eff;
-            font-size: 0.85rem;
-        }
+        .user-details h3 { color: #fff; font-size: 0.95rem; margin-bottom: 3px; }
+        .user-details p { color: #8c9eff; font-size: 0.85rem; }
 
         .logout-btn {
             background: rgba(255, 100, 100, 0.15);
@@ -213,39 +190,14 @@
         }
 
         @keyframes cardSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(179, 136, 255, 0.3) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .glass-card:hover {
             transform: translateY(-8px);
             border-color: rgba(179, 136, 255, 0.5);
-            box-shadow: 
-                0 10px 40px rgba(138, 43, 226, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        }
-
-        .glass-card:hover::before {
-            opacity: 1;
+            box-shadow: 0 10px 40px rgba(138, 43, 226, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .event-time {
@@ -268,42 +220,15 @@
             animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        .event-title {
-            color: #fff;
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-            line-height: 1.3;
-        }
-
-        .event-description {
-            color: #a8aebe;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-
-        .event-location {
-            color: #b388ff;
-            font-size: 0.85rem;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
+        .event-title { color: #fff; font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+        .event-description { color: #a8aebe; font-size: 0.9rem; margin-bottom: 15px; line-height: 1.5; }
+        .event-location { color: #b388ff; font-size: 0.85rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        
         .event-meta {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;
+            padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .badge {
@@ -317,87 +242,36 @@
             letter-spacing: 0.5px;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
-            animation: fadeIn 0.8s ease-out;
-        }
+        .empty-state { text-align: center; padding: 80px 20px; animation: fadeIn 0.8s ease-out; }
+        .empty-icon { font-size: 4rem; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+        .empty-state h2 { color: #fff; font-size: 1.8rem; margin-bottom: 10px; }
+        .empty-state p { color: #8c9eff; font-size: 1rem; }
 
-        .empty-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .empty-state h2 {
-            color: #fff;
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-        }
-
-        .empty-state p {
-            color: #8c9eff;
-            font-size: 1rem;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
-        }
-
+        .loading { text-align: center; padding: 60px 20px; }
         .spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
+            display: inline-block; width: 40px; height: 40px;
             border: 3px solid rgba(179, 136, 255, 0.2);
-            border-top-color: #b388ff;
-            border-radius: 50%;
+            border-top-color: #b388ff; border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { color: #8c9eff; margin-top: 20px; font-size: 0.95rem; }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .error-message, .local-warning {
+            background: rgba(255, 165, 0, 0.15);
+            border: 1px solid #ffa500;
+            color: #ffa500;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            display: inline-block;
+            max-width: 600px;
         }
 
-        .loading-text {
-            color: #8c9eff;
-            margin-top: 20px;
-            font-size: 0.95rem;
-        }
-
-        .error-message {
-            background: rgba(255, 100, 100, 0.1);
-            border: 1px solid rgba(255, 100, 100, 0.3);
-            color: #ff6464;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        @media (max-width: 768px) {
-            .logo {
-                font-size: 2.5rem;
-            }
-
-            .events-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .dashboard-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .user-info {
-                width: 100%;
-            }
-        }
     </style>
 </head>
 <body>
@@ -411,12 +285,11 @@
 
         <div class="auth-section" id="authSection">
             <p style="margin-bottom: 20px; color: #8c9eff; font-size: 0.95rem;">Inicia sesión con Google para sincronizar tu órbita</p>
-            <div id="g_id_onload"
-                 data-client_id="351239629977-h5fknbnjlssat4dko521nh1srtblki07.apps.googleusercontent.com"
-                 data-callback="handleCredentialResponse">
-            </div>
+            
+            <div id="localSetupWarning" style="display: none;"></div>
+            
             <div id="buttonDiv"></div>
-            <br>
+            
             <button class="auth-button" onclick="manualAuth()">🔐 Autorizar Acceso al Calendario</button>
         </div>
 
@@ -437,7 +310,6 @@
     </div>
 
     <script>
-        // ====== CONFIGURACIÓN DE GOOGLE API REAL DE TU CUENTA ======
         const CLIENT_ID = '351239629977-h5fknbnjlssat4dko521nh1srtblki07.apps.googleusercontent.com';
         const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
 
@@ -445,7 +317,6 @@
         let accessToken = null;
         let userProfile = null;
 
-        // ====== GENERAR STARFIELD ======
         function createStarfield() {
             const starfield = document.getElementById('starfield');
             for (let i = 0; i < 50; i++) {
@@ -460,9 +331,22 @@
             }
         }
 
-        // ====== INICIALIZACIÓN DE GOOGLE IDENTITY SERVICES ======
         function initializeGoogleAuth() {
-            // 1. Inicializar autenticación de identidad básica (Perfil y Correo)
+            // Verificación de archivo local
+            if (window.location.protocol === 'file:') {
+                const warningDiv = document.getElementById('localSetupWarning');
+                warningDiv.style.display = 'block';
+                warningDiv.innerHTML = `
+                    <strong>⚠️ Bloqueo de Seguridad de Google:</strong><br>
+                    Estás abriendo el archivo localmente (file://). Google oculta el botón de inicio de sesión por este medio.<br><br>
+                    <strong>Solución rápida:</strong><br>
+                    1. Abre una terminal en esta carpeta.<br>
+                    2. Ejecuta: <code>python -m http.server 8000</code><br>
+                    3. Entra desde tu navegador a: <code>http://localhost:8000/Calendar_app.html</code>
+                `;
+                return; // Detenemos la inicialización si es file:// para evitar errores en consola
+            }
+
             google.accounts.id.initialize({
                 client_id: CLIENT_ID,
                 callback: handleCredentialResponse,
@@ -471,33 +355,26 @@
 
             google.accounts.id.renderButton(
                 document.getElementById('buttonDiv'),
-                {
-                    theme: 'outline',
-                    size: 'large',
-                    locale: 'es'
-                }
+                { theme: 'outline', size: 'large', locale: 'es' }
             );
 
-            // 2. Inicializar cliente OAuth2 específico para conseguir el Access Token del Calendario
             tokenClient = google.accounts.oauth2.initTokenClient({
                 client_id: CLIENT_ID,
                 scope: SCOPES,
                 callback: (tokenResponse) => {
                     if (tokenResponse && tokenResponse.access_token) {
                         accessToken = tokenResponse.access_token;
-                        loadRealCalendarEvents(); // Ejecuta la consulta real al calendario
+                        loadRealCalendarEvents();
                     }
                 },
             });
         }
 
-        // ====== MANEJAR RESPUESTA DE IDENTIDAD ======
         function handleCredentialResponse(response) {
             const token = response.credential;
             decodeAndUseToken(token);
         }
 
-        // ====== DECODIFICAR JWT ======
         function decodeAndUseToken(token) {
             try {
                 const parts = token.split('.');
@@ -511,15 +388,15 @@
 
                 displayUser();
                 
-                // Intentar solicitar el token del calendario de manera fluida tras el login
-                tokenClient.requestAccessToken({prompt: ''});
+                if (tokenClient) {
+                    tokenClient.requestAccessToken({prompt: ''});
+                }
             } catch (error) {
                 console.error('Error decodificando token:', error);
                 showError('Error al procesar autenticación base');
             }
         }
 
-        // ====== CARGAR EVENTOS REALES DESDE GOOGLE CALENDAR ======
         function loadRealCalendarEvents() {
             if (!accessToken) {
                 showError('Error: No se pudo obtener acceso al calendario');
@@ -527,20 +404,12 @@
             }
 
             showLoading();
-
             const now = new Date().toISOString();
-            // Solicitud directa pasándole el token en las cabeceras HTTP estándares
             const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${now}&maxResults=12&orderBy=startTime&singleEvents=true`;
 
-            fetch(url, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            })
+            fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}` } })
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Permisos insuficientes o error de API');
-                    }
+                    if (!response.ok) throw new Error('Permisos insuficientes o error de API');
                     return response.json();
                 })
                 .then(data => {
@@ -551,12 +420,11 @@
                     }
                 })
                 .catch(error => {
-                    console.error('Error cargando eventos:', error);
-                    showError('No se pudieron recuperar eventos reales. Verifica las restricciones de Orígenes de JavaScript en tu Consola de Google Cloud.');
+                    console.error('Error:', error);
+                    showError('No se pudieron recuperar eventos reales. Verifica las restricciones de Orígenes de JavaScript en Google Cloud.');
                 });
         }
 
-        // ====== MOSTRAR EVENTOS ======
         function displayEvents(events) {
             const container = document.getElementById('eventsContainer');
             container.innerHTML = '';
@@ -564,4 +432,120 @@
             events.forEach(event => {
                 const start = event.start.dateTime || event.start.date;
                 const eventDate = new Date(start);
-                const
+                const now = new Date();
+                const isToday = eventDate.toDateString() === now.toDateString();
+                const isSoon = eventDate < new Date(now.getTime() + 3600000);
+
+                const card = document.createElement('div');
+                card.className = 'glass-card';
+                
+                const timeString = formatEventTime(eventDate);
+                const badge = isToday ? 'HOY' : isSoon ? 'PRONTO' : 'PRÓXIMO';
+
+                card.innerHTML = `
+                    <div class="event-time"><span class="time-icon"></span>${timeString}</div>
+                    <h3 class="event-title">${escapeHtml(event.summary || 'Sin título')}</h3>
+                    ${event.description ? `<p class="event-description">${escapeHtml(event.description)}</p>` : ''}
+                    ${event.location ? `<div class="event-location">📍 ${escapeHtml(event.location)}</div>` : ''}
+                    <div class="event-meta"><span class="badge">${badge}</span></div>
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById('dashboard').classList.add('active');
+            document.getElementById('authSection').style.display = 'none';
+        }
+
+        function formatEventTime(date) {
+            const now = new Date();
+            const timeDiff = date - now;
+            const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            
+            let dateStr = '';
+            if (date.toDateString() === now.toDateString()) {
+                dateStr = 'Hoy';
+            } else if (days === 1) {
+                dateStr = 'Mañana';
+            } else if (days > 1 && days < 7) {
+                dateStr = `En ${days} días`;
+            } else {
+                dateStr = date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
+            }
+
+            const timeStr = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+            return `${dateStr} · ${timeStr}`;
+        }
+
+        function displayUser() {
+            if (userProfile) {
+                document.getElementById('userName').textContent = userProfile.name;
+                document.getElementById('userEmail').textContent = userProfile.email;
+                document.getElementById('userAvatar').src = userProfile.picture;
+            }
+        }
+
+        function showEmptyState() {
+            document.getElementById('eventsContainer').innerHTML = `
+                <div style="grid-column: 1/-1;">
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h2>No hay eventos próximos</h2>
+                        <p>Tu calendario está libre de anomalías espaciales. ¡Relájate! 🌙</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('dashboard').classList.add('active');
+            document.getElementById('authSection').style.display = 'none';
+        }
+
+        function showLoading() {
+            document.getElementById('eventsContainer').innerHTML = `
+                <div style="grid-column: 1/-1;"><div class="loading"><div class="spinner"></div><div class="loading-text">Sincronizando coordenadas temporales...</div></div></div>
+            `;
+            document.getElementById('dashboard').classList.add('active');
+            document.getElementById('authSection').style.display = 'none';
+        }
+
+        function showError(message) {
+            document.getElementById('eventsContainer').innerHTML = `<div style="grid-column: 1/-1;"><div class="error-message">${message}</div></div>`;
+            document.getElementById('dashboard').classList.add('active');
+            document.getElementById('authSection').style.display = 'none';
+        }
+
+        function logout() {
+            google.accounts.id.disableAutoSelect();
+            accessToken = null;
+            userProfile = null;
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('eventsContainer').innerHTML = '';
+        }
+
+        function manualAuth() {
+            if (window.location.protocol === 'file:') {
+                alert('No se puede conectar usando file://. Inicia un servidor local.');
+                return;
+            }
+            if (tokenClient) {
+                tokenClient.requestAccessToken({prompt: 'consent'});
+            } else {
+                alert('El componente de autenticación aún está inicializándose.');
+            }
+        }
+
+        function escapeHtml(text) {
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        window.addEventListener('load', () => {
+            createStarfield();
+            try {
+                initializeGoogleAuth();
+            } catch (error) {
+                console.error('Error al inicializar la autenticación:', error);
+            }
+        });
+    </script>
+</body>
+</html>
