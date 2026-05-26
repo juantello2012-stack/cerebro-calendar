@@ -104,6 +104,7 @@
 
         #g_id_onload {
             display: inline-block;
+            margin-bottom: 15px;
         }
 
         .auth-button {
@@ -118,6 +119,7 @@
             transition: all 0.3s ease;
             margin-top: 20px;
             font-size: 1rem;
+            display: inline-block;
         }
 
         .auth-button:hover {
@@ -220,12 +222,6 @@
                 transform: translateY(0);
             }
         }
-
-        .glass-card:nth-child(1) { animation-delay: 0.1s; }
-        .glass-card:nth-child(2) { animation-delay: 0.2s; }
-        .glass-card:nth-child(3) { animation-delay: 0.3s; }
-        .glass-card:nth-child(4) { animation-delay: 0.4s; }
-        .glass-card:nth-child(5) { animation-delay: 0.5s; }
 
         .glass-card::before {
             content: '';
@@ -414,13 +410,14 @@
         </div>
 
         <div class="auth-section" id="authSection">
-            <p style="margin-bottom: 20px; color: #8c9eff; font-size: 0.95rem;">Inicia sesión con Google para ver tus eventos</p>
+            <p style="margin-bottom: 20px; color: #8c9eff; font-size: 0.95rem;">Inicia sesión con Google para sincronizar tu órbita</p>
             <div id="g_id_onload"
                  data-client_id="351239629977-h5fknbnjlssat4dko521nh1srtblki07.apps.googleusercontent.com"
                  data-callback="handleCredentialResponse">
             </div>
             <div id="buttonDiv"></div>
-            <button class="auth-button" onclick="manualAuth()">🔐 Autenticar con Google</button>
+            <br>
+            <button class="auth-button" onclick="manualAuth()">🔐 Autorizar Acceso al Calendario</button>
         </div>
 
         <div class="dashboard" id="dashboard">
@@ -440,9 +437,8 @@
     </div>
 
     <script>
-        // ====== CONFIGURACIÓN DE GOOGLE CALENDAR API ======
+        // ====== CONFIGURACIÓN DE GOOGLE API REAL DE TU CUENTA ======
         const CLIENT_ID = '351239629977-h5fknbnjlssat4dko521nh1srtblki07.apps.googleusercontent.com';
-        const API_KEY = 'YOUR_API_KEY';
         const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
 
         let tokenClient;
@@ -466,6 +462,7 @@
 
         // ====== INICIALIZACIÓN DE GOOGLE IDENTITY SERVICES ======
         function initializeGoogleAuth() {
+            // 1. Inicializar autenticación de identidad básica (Perfil y Correo)
             google.accounts.id.initialize({
                 client_id: CLIENT_ID,
                 callback: handleCredentialResponse,
@@ -480,9 +477,21 @@
                     locale: 'es'
                 }
             );
+
+            // 2. Inicializar cliente OAuth2 específico para conseguir el Access Token del Calendario
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: SCOPES,
+                callback: (tokenResponse) => {
+                    if (tokenResponse && tokenResponse.access_token) {
+                        accessToken = tokenResponse.access_token;
+                        loadRealCalendarEvents(); // Ejecuta la consulta real al calendario
+                    }
+                },
+            });
         }
 
-        // ====== MANEJAR RESPUESTA DE GOOGLE ======
+        // ====== MANEJAR RESPUESTA DE IDENTIDAD ======
         function handleCredentialResponse(response) {
             const token = response.credential;
             decodeAndUseToken(token);
@@ -501,74 +510,18 @@
                 };
 
                 displayUser();
-                loadCalendarWithServiceAccountFlow();
+                
+                // Intentar solicitar el token del calendario de manera fluida tras el login
+                tokenClient.requestAccessToken({prompt: ''});
             } catch (error) {
                 console.error('Error decodificando token:', error);
-                showError('Error al procesar autenticación');
+                showError('Error al procesar autenticación base');
             }
         }
 
-        // ====== FLUJO ALTERNATIVO: USAR GAPI PARA ACCESO A CALENDAR ======
-        function loadCalendarWithServiceAccountFlow() {
-            // Crear un token ficticio para demostración
-            accessToken = 'demo_token_' + Date.now();
-            showLoading();
-            
-            // En producción, aquí irías al backend para obtener un token válido
-            // Para esta demo, usaremos datos de ejemplo
-            setTimeout(() => {
-                loadEventsDemo();
-            }, 1000);
-        }
-
-        // ====== CARGAR EVENTOS (DEMO) ======
-        function loadEventsDemo() {
-            const now = new Date();
-            const demoEvents = [
-                {
-                    summary: '🚀 Reunión de Estrategia Digital',
-                    description: 'Discusión sobre nuevas iniciativas de marketing',
-                    start: { dateTime: new Date(now.getTime() + 3600000).toISOString() },
-                    location: 'Sala Conferencias A',
-                    id: '1'
-                },
-                {
-                    summary: '💻 Standup del Equipo',
-                    description: 'Sincronización diaria',
-                    start: { dateTime: new Date(now.getTime() + 7200000).toISOString() },
-                    location: 'Zoom',
-                    id: '2'
-                },
-                {
-                    summary: '📊 Presentación Trimestral',
-                    description: 'Resultados Q2 y proyecciones Q3',
-                    start: { dateTime: new Date(now.getTime() + 86400000).toISOString() },
-                    location: 'Auditorio Principal',
-                    id: '3'
-                },
-                {
-                    summary: '🎯 Planificación de Proyecto X',
-                    description: 'Definir timeline y recursos',
-                    start: { dateTime: new Date(now.getTime() + 172800000).toISOString() },
-                    location: 'Oficina',
-                    id: '4'
-                },
-                {
-                    summary: '🌟 Entrega de Proyecto Alpha',
-                    description: 'Entrega final y demostración al cliente',
-                    start: { dateTime: new Date(now.getTime() + 259200000).toISOString() },
-                    location: 'Remoto',
-                    id: '5'
-                }
-            ];
-
-            displayEvents(demoEvents);
-        }
-
-        // ====== FUNCIÓN PARA CARGAR EVENTOS REALES (cuando tengas credentials) ======
+        // ====== CARGAR EVENTOS REALES DESDE GOOGLE CALENDAR ======
         function loadRealCalendarEvents() {
             if (!accessToken) {
-                console.error('No hay token de acceso');
                 showError('Error: No se pudo obtener acceso al calendario');
                 return;
             }
@@ -576,12 +529,22 @@
             showLoading();
 
             const now = new Date().toISOString();
-            const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?key=${API_KEY}&access_token=${accessToken}&timeMin=${now}&maxResults=10&orderBy=startTime&singleEvents=true`;
+            // Solicitud directa pasándole el token en las cabeceras HTTP estándares
+            const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${now}&maxResults=12&orderBy=startTime&singleEvents=true`;
 
-            fetch(url)
-                .then(response => response.json())
+            fetch(url, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Permisos insuficientes o error de API');
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    if (data.items) {
+                    if (data.items && data.items.length > 0) {
                         displayEvents(data.items);
                     } else {
                         showEmptyState();
@@ -589,8 +552,7 @@
                 })
                 .catch(error => {
                     console.error('Error cargando eventos:', error);
-                    showError('No se pudo cargar los eventos. Mostrando eventos de demostración...');
-                    loadEventsDemo();
+                    showError('No se pudieron recuperar eventos reales. Verifica las restricciones de Orígenes de JavaScript en tu Consola de Google Cloud.');
                 });
         }
 
@@ -599,145 +561,7 @@
             const container = document.getElementById('eventsContainer');
             container.innerHTML = '';
 
-            if (!events || events.length === 0) {
-                showEmptyState();
-                return;
-            }
-
             events.forEach(event => {
                 const start = event.start.dateTime || event.start.date;
                 const eventDate = new Date(start);
-                const now = new Date();
-                const isToday = eventDate.toDateString() === now.toDateString();
-                const isSoon = eventDate < new Date(now.getTime() + 3600000);
-
-                const card = document.createElement('div');
-                card.className = 'glass-card';
-                
-                const timeString = formatEventTime(eventDate);
-                const badge = isToday ? 'HOY' : isSoon ? 'PRONTO' : 'PRÓXIMO';
-
-                card.innerHTML = `
-                    <div class="event-time">
-                        <span class="time-icon"></span>
-                        ${timeString}
-                    </div>
-                    <h3 class="event-title">${escapeHtml(event.summary || 'Sin título')}</h3>
-                    ${event.description ? `<p class="event-description">${escapeHtml(event.description)}</p>` : ''}
-                    ${event.location ? `<div class="event-location">📍 ${escapeHtml(event.location)}</div>` : ''}
-                    <div class="event-meta">
-                        <span class="badge">${badge}</span>
-                    </div>
-                `;
-
-                container.appendChild(card);
-            });
-
-            document.getElementById('dashboard').classList.add('active');
-            document.getElementById('authSection').style.display = 'none';
-        }
-
-        // ====== FORMATEAR HORA DEL EVENTO ======
-        function formatEventTime(date) {
-            const now = new Date();
-            const days = Math.floor((date - now) / (1000 * 60 * 60 * 24));
-            
-            let dateStr = '';
-            if (days === 0) {
-                dateStr = 'Hoy';
-            } else if (days === 1) {
-                dateStr = 'Mañana';
-            } else if (days < 7) {
-                dateStr = `En ${days} días`;
-            } else {
-                dateStr = date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
-            }
-
-            const timeStr = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-            return `${dateStr} · ${timeStr}`;
-        }
-
-        // ====== MOSTRAR USUARIO ======
-        function displayUser() {
-            if (userProfile) {
-                document.getElementById('userName').textContent = userProfile.name;
-                document.getElementById('userEmail').textContent = userProfile.email;
-                document.getElementById('userAvatar').src = userProfile.picture;
-            }
-        }
-
-        // ====== MOSTRAR ESTADO VACÍO ======
-        function showEmptyState() {
-            document.getElementById('eventsContainer').innerHTML = `
-                <div style="grid-column: 1/-1;">
-                    <div class="empty-state">
-                        <div class="empty-icon">📭</div>
-                        <h2>No hay eventos próximos</h2>
-                        <p>Tu calendario está vacío. ¡Relájate! 🌙</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ====== MOSTRAR CARGA ======
-        function showLoading() {
-            document.getElementById('eventsContainer').innerHTML = `
-                <div style="grid-column: 1/-1;">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <div class="loading-text">Cargando órbitas...</div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ====== MOSTRAR ERROR ======
-        function showError(message) {
-            document.getElementById('eventsContainer').innerHTML = `
-                <div style="grid-column: 1/-1;">
-                    <div class="error-message">${message}</div>
-                </div>
-            `;
-        }
-
-        // ====== LOGOUT ======
-        function logout() {
-            google.accounts.id.disableAutoSelect();
-            accessToken = null;
-            userProfile = null;
-            document.getElementById('dashboard').classList.remove('active');
-            document.getElementById('authSection').style.display = 'block';
-            document.getElementById('eventsContainer').innerHTML = '';
-        }
-
-        // ====== AUTENTICACIÓN MANUAL ======
-        function manualAuth() {
-            alert('⚠️ IMPORTANTE:\n\n1. Ve a https://console.cloud.google.com/\n2. Crea un OAuth 2.0 Client ID\n3. Reemplaza "YOUR_CLIENT_ID" en el código\n4. Recarga la página\n\nPor ahora, mostrando eventos de demostración...');
-            displayUser();
-            loadEventsDemo();
-        }
-
-        // ====== UTILIDADES ======
-        function escapeHtml(text) {
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
-            return text.replace(/[&<>"']/g, m => map[m]);
-        }
-
-        // ====== INICIALIZACIÓN ======
-        window.addEventListener('load', () => {
-            createStarfield();
-            try {
-                initializeGoogleAuth();
-            } catch (error) {
-                console.log('Google Auth no disponible. Modo demostración activado.');
-            }
-        });
-    </script>
-</body>
-</html>
+                const
