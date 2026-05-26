@@ -92,30 +92,24 @@
             to { opacity: 1; }
         }
 
-        #buttonDiv {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 15px;
-            min-height: 40px; /* Asegura espacio para el botón de Google */
-        }
-
         .auth-button {
             background: rgba(179, 136, 255, 0.15);
             border: 2px solid #b388ff;
             color: #b388ff;
-            padding: 12px 30px;
+            padding: 14px 35px;
             border-radius: 10px;
             cursor: pointer;
             font-family: 'Courier Prime', monospace;
             font-weight: 700;
             transition: all 0.3s ease;
-            font-size: 1rem;
+            font-size: 1.05rem;
             display: inline-block;
+            box-shadow: 0 0 15px rgba(179, 136, 255, 0.1);
         }
 
         .auth-button:hover {
             background: rgba(179, 136, 255, 0.3);
-            box-shadow: 0 0 20px rgba(179, 136, 255, 0.5);
+            box-shadow: 0 0 25px rgba(179, 136, 255, 0.6);
             transform: translateY(-2px);
         }
 
@@ -271,7 +265,6 @@
             display: inline-block;
             max-width: 600px;
         }
-
     </style>
 </head>
 <body>
@@ -284,13 +277,11 @@
         </div>
 
         <div class="auth-section" id="authSection">
-            <p style="margin-bottom: 20px; color: #8c9eff; font-size: 0.95rem;">Inicia sesión con Google para sincronizar tu órbita</p>
+            <p style="margin-bottom: 25px; color: #8c9eff; font-size: 0.95rem;">Sincroniza tu órbita para acceder a tu segundo cerebro</p>
             
             <div id="localSetupWarning" style="display: none;"></div>
             
-            <div id="buttonDiv"></div>
-            
-            <button class="auth-button" onclick="manualAuth()">🔐 Autorizar Acceso al Calendario</button>
+            <button class="auth-button" onclick="startAuthFlow()">🌌 Sincronizar con Google</button>
         </div>
 
         <div class="dashboard" id="dashboard">
@@ -311,7 +302,9 @@
 
     <script>
         const CLIENT_ID = '351239629977-h5fknbnjlssat4dko521nh1srtblki07.apps.googleusercontent.com';
-        const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
+        
+        // Combinamos permisos de calendario + perfil básico en una sola solicitud
+        const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
 
         let tokenClient;
         let accessToken = null;
@@ -332,69 +325,57 @@
         }
 
         function initializeGoogleAuth() {
-            // Verificación de archivo local
             if (window.location.protocol === 'file:') {
                 const warningDiv = document.getElementById('localSetupWarning');
                 warningDiv.style.display = 'block';
                 warningDiv.innerHTML = `
                     <strong>⚠️ Bloqueo de Seguridad de Google:</strong><br>
-                    Estás abriendo el archivo localmente (file://). Google oculta el botón de inicio de sesión por este medio.<br><br>
+                    Estás abriendo el archivo localmente (file://). Google oculta el inicio de sesión por este medio.<br><br>
                     <strong>Solución rápida:</strong><br>
                     1. Abre una terminal en esta carpeta.<br>
                     2. Ejecuta: <code>python -m http.server 8000</code><br>
                     3. Entra desde tu navegador a: <code>http://localhost:8000/Calendar_app.html</code>
                 `;
-                return; // Detenemos la inicialización si es file:// para evitar errores en consola
+                return;
             }
 
-            google.accounts.id.initialize({
-                client_id: CLIENT_ID,
-                callback: handleCredentialResponse,
-                auto_select: false,
-            });
-
-            google.accounts.id.renderButton(
-                document.getElementById('buttonDiv'),
-                { theme: 'outline', size: 'large', locale: 'es' }
-            );
-
+            // Configurar cliente de tokens único
             tokenClient = google.accounts.oauth2.initTokenClient({
                 client_id: CLIENT_ID,
                 scope: SCOPES,
                 callback: (tokenResponse) => {
                     if (tokenResponse && tokenResponse.access_token) {
                         accessToken = tokenResponse.access_token;
-                        loadRealCalendarEvents();
+                        showLoading();
+                        
+                        // Cargamos perfil y calendario de forma fluida
+                        loadUserProfile()
+                            .then(() => loadRealCalendarEvents())
+                            .catch(error => {
+                                console.error('Error al resolver identidad:', error);
+                                loadRealCalendarEvents(); 
+                            });
                     }
                 },
             });
         }
 
-        function handleCredentialResponse(response) {
-            const token = response.credential;
-            decodeAndUseToken(token);
-        }
-
-        function decodeAndUseToken(token) {
-            try {
-                const parts = token.split('.');
-                const payload = JSON.parse(atob(parts[1]));
-                
+        function loadUserProfile() {
+            return fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Error al consultar datos base');
+                return response.json();
+            })
+            .then(data => {
                 userProfile = {
-                    email: payload.email,
-                    name: payload.name,
-                    picture: payload.picture
+                    email: data.email,
+                    name: data.name,
+                    picture: data.picture || 'https://www.w3schools.com/howto/img_avatar.png'
                 };
-
                 displayUser();
-                
-                if (tokenClient) {
-                    tokenClient.requestAccessToken({prompt: ''});
-                }
-            } catch (error) {
-                console.error('Error decodificando token:', error);
-                showError('Error al procesar autenticación base');
-            }
+            });
         }
 
         function loadRealCalendarEvents() {
@@ -403,7 +384,6 @@
                 return;
             }
 
-            showLoading();
             const now = new Date().toISOString();
             const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${now}&maxResults=12&orderBy=startTime&singleEvents=true`;
 
@@ -421,7 +401,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showError('No se pudieron recuperar eventos reales. Verifica las restricciones de Orígenes de JavaScript en Google Cloud.');
+                    showError('No se pudieron recuperar los eventos de tu órbita. Verifica la configuración de Orígenes de JavaScript en Google Cloud.');
                 });
         }
 
@@ -513,7 +493,6 @@
         }
 
         function logout() {
-            google.accounts.id.disableAutoSelect();
             accessToken = null;
             userProfile = null;
             document.getElementById('dashboard').classList.remove('active');
@@ -521,13 +500,14 @@
             document.getElementById('eventsContainer').innerHTML = '';
         }
 
-        function manualAuth() {
+        function startAuthFlow() {
             if (window.location.protocol === 'file:') {
-                alert('No se puede conectar usando file://. Inicia un servidor local.');
+                alert('No se puede conectar usando file://. Usa GitHub Pages.');
                 return;
             }
             if (tokenClient) {
-                tokenClient.requestAccessToken({prompt: 'consent'});
+                // Abre el selector de cuentas pidiendo la aprobación unificada
+                tokenClient.requestAccessToken({prompt: 'select_account'});
             } else {
                 alert('El componente de autenticación aún está inicializándose.');
             }
