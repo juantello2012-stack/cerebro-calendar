@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Second Brain - Calendar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * {
@@ -14,154 +14,118 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Courier Prime', monospace;
             background-color: #f7f6f3;
             color: #2c2c2c;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        /* Header */
-        header {
-            background-color: #ffffff;
-            border-bottom: 1px solid #e5e3df;
-            padding: 24px 0;
-            position: sticky;
+        /* Animación de fondo starfield */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .stars {
+            position: fixed;
             top: 0;
-            z-index: 100;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .header-content {
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .logo {
-            font-family: 'Lora', serif;
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 3.5rem;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
             color: #2c2c2c;
-            letter-spacing: -0.5px;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
         }
 
-        .logo-subtitle {
-            font-size: 12px;
+        .subtitle {
             color: #9b9995;
-            font-weight: 300;
-            margin-top: 2px;
-            letter-spacing: 1px;
+            font-size: 1rem;
+            letter-spacing: 2px;
             text-transform: uppercase;
         }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .user-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 16px;
-            background-color: #f7f6f3;
-            border-radius: 8px;
-            border: 1px solid #e5e3df;
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 1.5px solid #d4d1ca;
-            object-fit: cover;
-        }
-
-        .user-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-name {
-            font-size: 13px;
-            font-weight: 500;
-            color: #2c2c2c;
-        }
-
-        .user-email {
-            font-size: 11px;
-            color: #9b9995;
-        }
-
-        .logout-btn {
-            background: none;
-            border: 1px solid #d4d1ca;
-            color: #9b9995;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            transition: all 0.2s ease;
-        }
-
-        .logout-btn:hover {
-            color: #2c2c2c;
-            border-color: #9b9995;
-            background-color: #ffffff;
-        }
-
-        /* Main Container */
-        .container {
-            flex: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 24px;
-            width: 100%;
-        }
-
-        /* Auth Section */
         .auth-section {
-            display: none;
             text-align: center;
-            padding: 80px 24px;
-        }
-
-        .auth-section.active {
-            display: block;
-        }
-
-        .auth-title {
-            font-family: 'Lora', serif;
-            font-size: 48px;
-            font-weight: 600;
-            color: #2c2c2c;
-            margin-bottom: 12px;
-            letter-spacing: -1px;
-        }
-
-        .auth-subtitle {
-            font-size: 16px;
-            color: #9b9995;
             margin-bottom: 40px;
-            font-weight: 300;
-            line-height: 1.6;
+            animation: fadeIn 0.6s ease-out 0.2s backwards;
         }
 
-        #buttonDiv {
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        #g_id_onload {
             display: inline-block;
-            margin: 30px 0;
+            margin-bottom: 15px;
         }
 
-        /* Dashboard Section */
+        .auth-button {
+            background: rgba(179, 136, 255, 0.15);
+            border: 2px solid #b388ff;
+            color: #b388ff;
+            padding: 12px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            font-size: 1rem;
+            display: inline-block;
+        }
+
+        .auth-button:hover {
+            background: rgba(179, 136, 255, 0.3);
+            box-shadow: 0 0 20px rgba(179, 136, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
         .dashboard {
             display: none;
+            animation: fadeIn 0.8s ease-out;
         }
 
         .dashboard.active {
@@ -169,140 +133,221 @@
         }
 
         .dashboard-header {
-            margin-bottom: 48px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid #e5e3df;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        .dashboard-title {
-            font-family: 'Lora', serif;
-            font-size: 32px;
-            font-weight: 600;
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #ffffff;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 1px solid #e5e3df;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid #d4d1ca;
+        }
+
+        .user-details h3 {
             color: #2c2c2c;
-            margin-bottom: 8px;
+            font-size: 0.95rem;
+            margin-bottom: 3px;
         }
 
-        .dashboard-subtitle {
-            font-size: 14px;
+        .user-details p {
             color: #9b9995;
+            font-size: 0.85rem;
         }
 
-        /* Events Grid */
+        .logout-btn {
+            background: rgba(255, 100, 100, 0.15);
+            border: 1px solid rgba(255, 100, 100, 0.4);
+            color: #ff6464;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Courier Prime', monospace;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 100, 100, 0.3);
+            box-shadow: 0 0 15px rgba(255, 100, 100, 0.3);
+        }
+
         .events-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
             margin-bottom: 40px;
         }
 
-        .event-card {
-            background-color: #ffffff;
+        .glass-card {
+            background: #ffffff;
             border: 1px solid #e5e3df;
-            border-radius: 8px;
+            border-radius: 16px;
             padding: 24px;
-            transition: all 0.3s ease;
-            cursor: default;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
             overflow: hidden;
+            animation: cardSlideIn 0.6s ease-out backwards;
         }
 
-        .event-card::before {
+        @keyframes cardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glass-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #c9c5bb, transparent);
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(179, 136, 255, 0.3) 0%, transparent 70%);
             opacity: 0;
             transition: opacity 0.3s ease;
+            pointer-events: none;
         }
 
-        .event-card:hover {
+        .glass-card:hover {
+            transform: translateY(-8px);
             border-color: #d4d1ca;
-            background-color: #fefdfb;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
-        .event-card:hover::before {
+        .glass-card:hover::before {
             opacity: 1;
         }
 
-        .event-date {
-            font-size: 12px;
+        .event-time {
             color: #9b9995;
+            font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             margin-bottom: 12px;
-            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .time-icon {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #8c9eff;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
 
         .event-title {
-            font-family: 'Lora', serif;
-            font-size: 20px;
-            font-weight: 600;
             color: #2c2c2c;
-            margin-bottom: 8px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 12px;
             line-height: 1.3;
         }
 
         .event-description {
-            font-size: 14px;
             color: #6b6b6b;
-            margin-bottom: 12px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
             line-height: 1.5;
         }
 
         .event-location {
-            font-size: 13px;
             color: #9b9995;
-            padding-top: 12px;
-            border-top: 1px solid #e5e3df;
-            margin-top: 12px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .event-location-icon {
-            margin-right: 6px;
+        .event-meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* Empty State */
+        .badge {
+            background: rgba(179, 136, 255, 0.1);
+            border: 1px solid rgba(179, 136, 255, 0.2);
+            color: #b388ff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         .empty-state {
             text-align: center;
-            padding: 80px 24px;
+            padding: 80px 20px;
+            animation: fadeIn 0.8s ease-out;
         }
 
         .empty-icon {
-            font-size: 64px;
-            margin-bottom: 24px;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
         }
 
-        .empty-title {
-            font-family: 'Lora', serif;
-            font-size: 28px;
-            font-weight: 600;
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .empty-state h2 {
             color: #2c2c2c;
-            margin-bottom: 8px;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
         }
 
-        .empty-text {
-            font-size: 16px;
+        .empty-state p {
             color: #9b9995;
+            font-size: 1rem;
         }
 
-        /* Loading */
         .loading {
             text-align: center;
-            padding: 60px 24px;
+            padding: 60px 20px;
         }
 
         .spinner {
+            display: inline-block;
             width: 40px;
             height: 40px;
-            border: 2px solid #e5e3df;
+            border: 3px solid #e5e3df;
             border-top-color: #2c2c2c;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
         }
 
         @keyframes spin {
@@ -311,189 +356,135 @@
 
         .loading-text {
             color: #9b9995;
-            font-size: 14px;
+            margin-top: 20px;
+            font-size: 0.95rem;
         }
 
-        /* Error */
         .error-message {
-            background-color: #fff5f5;
-            border: 1px solid #f0d5d5;
-            color: #c0474c;
-            padding: 16px 20px;
-            border-radius: 6px;
-            margin-bottom: 24px;
-            font-size: 13px;
+            background: rgba(255, 100, 100, 0.1);
+            border: 1px solid rgba(255, 100, 100, 0.3);
+            color: #ff6464;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
             text-align: center;
         }
 
-        .config-box {
-            background-color: #fafaf8;
-            border: 1px solid #e5e3df;
-            color: #9b9995;
-            padding: 16px 20px;
-            border-radius: 6px;
-            margin-bottom: 24px;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        .config-box strong {
-            color: #2c2c2c;
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 20px;
-                align-items: flex-start;
-            }
-
-            .header-right {
-                width: 100%;
-                flex-direction: column;
-            }
-
-            .user-card {
-                width: 100%;
-            }
-
-            .logout-btn {
-                width: 100%;
-            }
-
-            .auth-title {
-                font-size: 32px;
-            }
-
-            .dashboard-title {
-                font-size: 24px;
+            .logo {
+                font-size: 2.5rem;
             }
 
             .events-grid {
                 grid-template-columns: 1fr;
             }
 
-            .container {
-                padding: 24px 16px;
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
             }
 
-            .event-card {
-                padding: 20px;
+            .user-info {
+                width: 100%;
             }
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f7f6f3;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #d4d1ca;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #c9c5bb;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="header-content">
-            <div>
-                <div class="logo">Second Brain</div>
-                <div class="logo-subtitle">Calendar</div>
-            </div>
-            <div class="header-right">
-                <div class="user-card" id="userCard" style="display: none;">
-                    <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
-                    <div class="user-info">
-                        <div class="user-name" id="userName">Usuario</div>
-                        <div class="user-email" id="userEmail">email@example.com</div>
-                    </div>
-                </div>
-                <button class="logout-btn" id="logoutBtn" style="display: none;" onclick="logout()">Salir</button>
-                <div id="buttonDiv"></div>
-            </div>
-        </div>
-    </header>
+    <div class="stars" id="starfield"></div>
 
-    <!-- Main Container -->
     <div class="container">
-        <!-- Auth Section -->
-        <div class="auth-section active" id="authSection">
-            <div class="auth-title">Second Brain</div>
-            <div class="auth-subtitle">Organiza tu segundo cerebro digital sincronizando tu calendario</div>
-            <div class="config-box" id="clientIdDisplay">
-                ⚙️ <strong>Autenticación con Google Calendar</strong><br>
-                Haz clic en "Acceder con Google" para conectar tu calendario
-            </div>
+        <div class="header">
+            <div class="logo">Second Brain</div>
+            <div class="subtitle">Calendar Hub</div>
         </div>
 
-        <!-- Dashboard Section -->
+        <div class="auth-section" id="authSection">
+            <p style="margin-bottom: 20px; color: #9b9995; font-size: 0.95rem;">Organiza tu segundo cerebro digital sincronizando tu calendario</p>
+            <div id="g_id_onload"
+                 data-client_id="351239629977-h5fknbnjlssat4dko521nh1srtblki07.apps.googleusercontent.com"
+                 data-callback="handleCredentialResponse">
+            </div>
+            <div id="buttonDiv"></div>
+            <br>
+            <button class="auth-button" onclick="manualAuth()">🔐 Autorizar Acceso al Calendario</button>
+        </div>
+
         <div class="dashboard" id="dashboard">
             <div class="dashboard-header">
-                <div class="dashboard-title">Próximas Actividades</div>
-                <div class="dashboard-subtitle" id="eventCount">Cargando eventos...</div>
+                <div class="user-info">
+                    <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+                    <div class="user-details">
+                        <h3 id="userName">Usuario</h3>
+                        <p id="userEmail">email@example.com</p>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">🚪 Cerrar sesión</button>
             </div>
+
             <div id="eventsContainer" class="events-grid"></div>
         </div>
     </div>
 
     <script>
-        // ⚠️ REEMPLAZA CON TU CLIENT_ID REAL
+        // ====== CONFIGURACIÓN DE GOOGLE API REAL DE TU CUENTA ======
         const CLIENT_ID = '351239629977-h5fknbnjlssat4dko521nh1srtblki07.apps.googleusercontent.com';
+        const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
 
+        let tokenClient;
+        let accessToken = null;
         let userProfile = null;
 
-        console.log('🧠 Second Brain iniciando...');
-
-        // ====== INICIALIZAR GOOGLE AUTH ======
-        function initializeGoogleAuth() {
-            console.log('🔐 Inicializando Google Auth...');
-            
-            if (!window.google) {
-                console.error('❌ Google SDK no disponible');
-                return;
-            }
-
-            try {
-                google.accounts.id.initialize({
-                    client_id: CLIENT_ID,
-                    callback: handleCredentialResponse,
-                    auto_select: false,
-                });
-
-                google.accounts.id.renderButton(
-                    document.getElementById('buttonDiv'),
-                    {
-                        theme: 'outline',
-                        size: 'large',
-                        locale: 'es'
-                    }
-                );
-                
-                console.log('✅ Google Auth inicializado');
-            } catch (error) {
-                console.error('❌ Error inicializando Google Auth:', error);
+        // ====== GENERAR STARFIELD ======
+        function createStarfield() {
+            const starfield = document.getElementById('starfield');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starfield.appendChild(star);
             }
         }
 
-        // ====== MANEJAR RESPUESTA DE GOOGLE ======
+        // ====== INICIALIZACIÓN DE GOOGLE IDENTITY SERVICES ======
+        function initializeGoogleAuth() {
+            // 1. Inicializar autenticación de identidad básica (Perfil y Correo)
+            google.accounts.id.initialize({
+                client_id: CLIENT_ID,
+                callback: handleCredentialResponse,
+                auto_select: false,
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById('buttonDiv'),
+                {
+                    theme: 'outline',
+                    size: 'large',
+                    locale: 'es'
+                }
+            );
+
+            // 2. Inicializar cliente OAuth2 específico para conseguir el Access Token del Calendario
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: SCOPES,
+                callback: (tokenResponse) => {
+                    if (tokenResponse && tokenResponse.access_token) {
+                        accessToken = tokenResponse.access_token;
+                        loadRealCalendarEvents(); // Ejecuta la consulta real al calendario
+                    }
+                },
+            });
+        }
+
+        // ====== MANEJAR RESPUESTA DE IDENTIDAD ======
         function handleCredentialResponse(response) {
-            console.log('✅ Respuesta de Google recibida');
-            try {
-                const token = response.credential;
-                decodeAndUseToken(token);
-            } catch (error) {
-                console.error('❌ Error:', error);
-            }
+            const token = response.credential;
+            decodeAndUseToken(token);
         }
 
         // ====== DECODIFICAR JWT ======
@@ -508,51 +499,51 @@
                     picture: payload.picture
                 };
 
-                console.log('✅ Usuario:', userProfile.name);
                 displayUser();
-                loadEventsDemo();
+                
+                // Intentar solicitar el token del calendario de manera fluida tras el login
+                tokenClient.requestAccessToken({prompt: ''});
             } catch (error) {
-                console.error('❌ Error decodificando token:', error);
+                console.error('Error decodificando token:', error);
+                showError('Error al procesar autenticación base');
             }
         }
 
-        // ====== CARGAR EVENTOS DEMO ======
-        function loadEventsDemo() {
-            const now = new Date();
-            const demoEvents = [
-                {
-                    summary: 'Reunión de Estrategia',
-                    description: 'Discusión sobre nuevas iniciativas',
-                    start: { dateTime: new Date(now.getTime() + 3600000).toISOString() },
-                    location: 'Sala A'
-                },
-                {
-                    summary: 'Standup del Equipo',
-                    description: 'Sincronización diaria',
-                    start: { dateTime: new Date(now.getTime() + 7200000).toISOString() },
-                    location: 'Zoom'
-                },
-                {
-                    summary: 'Presentación Trimestral',
-                    description: 'Resultados Q2 y proyecciones',
-                    start: { dateTime: new Date(now.getTime() + 86400000).toISOString() },
-                    location: 'Auditorio Principal'
-                },
-                {
-                    summary: 'Planificación de Proyecto X',
-                    description: 'Definir timeline y recursos',
-                    start: { dateTime: new Date(now.getTime() + 172800000).toISOString() },
-                    location: 'Oficina'
-                },
-                {
-                    summary: 'Revisión de Código',
-                    description: 'Análisis de pull requests',
-                    start: { dateTime: new Date(now.getTime() + 259200000).toISOString() },
-                    location: 'Remoto'
-                }
-            ];
+        // ====== CARGAR EVENTOS REALES DESDE GOOGLE CALENDAR ======
+        function loadRealCalendarEvents() {
+            if (!accessToken) {
+                showError('Error: No se pudo obtener acceso al calendario');
+                return;
+            }
 
-            displayEvents(demoEvents);
+            showLoading();
+
+            const now = new Date().toISOString();
+            // Solicitud directa pasándole el token en las cabeceras HTTP estándares
+            const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${now}&maxResults=12&orderBy=startTime&singleEvents=true`;
+
+            fetch(url, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Permisos insuficientes o error de API');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.items && data.items.length > 0) {
+                        displayEvents(data.items);
+                    } else {
+                        showEmptyState();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error cargando eventos:', error);
+                    showError('No se pudieron recuperar eventos reales. Verifica las restricciones de Orígenes de JavaScript en tu Consola de Google Cloud.');
+                });
         }
 
         // ====== MOSTRAR EVENTOS ======
@@ -560,112 +551,7 @@
             const container = document.getElementById('eventsContainer');
             container.innerHTML = '';
 
-            if (!events || events.length === 0) {
-                showEmptyState();
-                return;
-            }
-
             events.forEach(event => {
                 const start = event.start.dateTime || event.start.date;
                 const eventDate = new Date(start);
-
-                const card = document.createElement('div');
-                card.className = 'event-card';
-                
-                const timeString = formatEventTime(eventDate);
-
-                card.innerHTML = `
-                    <div class="event-date">${timeString}</div>
-                    <div class="event-title">${escapeHtml(event.summary || 'Sin título')}</div>
-                    ${event.description ? `<div class="event-description">${escapeHtml(event.description)}</div>` : ''}
-                    ${event.location ? `<div class="event-location"><span class="event-location-icon">📍</span>${escapeHtml(event.location)}</div>` : ''}
-                `;
-
-                container.appendChild(card);
-            });
-
-            document.getElementById('dashboard').classList.add('active');
-            document.getElementById('authSection').classList.remove('active');
-            document.getElementById('userCard').style.display = 'flex';
-            document.getElementById('logoutBtn').style.display = 'block';
-            document.getElementById('buttonDiv').style.display = 'none';
-        }
-
-        // ====== FORMATEAR HORA ======
-        function formatEventTime(date) {
-            const now = new Date();
-            const days = Math.floor((date - now) / (1000 * 60 * 60 * 24));
-            
-            let dateStr = '';
-            if (days === 0) {
-                dateStr = 'Hoy';
-            } else if (days === 1) {
-                dateStr = 'Mañana';
-            } else if (days < 7) {
-                dateStr = `En ${days} días`;
-            } else {
-                dateStr = date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
-            }
-
-            const timeStr = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-            return `${dateStr} · ${timeStr}`;
-        }
-
-        // ====== MOSTRAR USUARIO ======
-        function displayUser() {
-            if (userProfile) {
-                document.getElementById('userName').textContent = userProfile.name;
-                document.getElementById('userEmail').textContent = userProfile.email;
-                document.getElementById('userAvatar').src = userProfile.picture;
-            }
-        }
-
-        // ====== MOSTRAR ESTADO VACÍO ======
-        function showEmptyState() {
-            document.getElementById('eventsContainer').innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 80px 24px;">
-                    <div class="empty-icon">📭</div>
-                    <div class="empty-title">No hay eventos próximos</div>
-                    <div class="empty-text">Tu calendario está vacío. ¡Relájate! 🌙</div>
-                </div>
-            `;
-        }
-
-        // ====== LOGOUT ======
-        function logout() {
-            google.accounts.id.disableAutoSelect();
-            userProfile = null;
-            document.getElementById('dashboard').classList.remove('active');
-            document.getElementById('authSection').classList.add('active');
-            document.getElementById('userCard').style.display = 'none';
-            document.getElementById('logoutBtn').style.display = 'none';
-            document.getElementById('buttonDiv').style.display = 'inline-block';
-            document.getElementById('eventsContainer').innerHTML = '';
-        }
-
-        // ====== UTILIDADES ======
-        function escapeHtml(text) {
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
-            return text.replace(/[&<>"']/g, m => map[m]);
-        }
-
-        // ====== INICIALIZAR ======
-        window.addEventListener('load', () => {
-            console.log('📄 Página cargada');
-            setTimeout(() => {
-                if (window.google) {
-                    initializeGoogleAuth();
-                } else {
-                    console.error('❌ Google SDK no cargó');
-                }
-            }, 2000);
-        });
-    </script>
-</body>
-</html>
+                const
